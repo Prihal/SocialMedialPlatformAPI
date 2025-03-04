@@ -19,7 +19,6 @@ namespace SocialMedialPlatformAPI.BLL
             _helper = helper;
             _context =context;
         }
-
         public async Task<PaginationResponseModel<UserDto>> FollowerOrFollowingListById(RequestDto<FollowerListRequestDto> requestDto)
         {
             IQueryable<UserDto> data = requestDto.Model.FollowerOrFollowing
@@ -182,7 +181,7 @@ namespace SocialMedialPlatformAPI.BLL
         public async Task<PaginationResponseModel<RequestListResponseDto>> GetRequestListById(RequestDto<FollowRequestDto> requestDto)
         {
             IQueryable<RequestListResponseDto> data = _context.Requests
-                           .Include(m => m.FromUser) // Ensure FromUser is included for UserDTO
+                           .Include(m => m.FromUser) 
                            .Where(m => m.ToUserId == requestDto.Model.userId && m.IsDeleted == false && m.IsAccepted == false)
                            .OrderByDescending(r => r.CreatedDate)
                            .Select(r => new RequestListResponseDto
@@ -353,6 +352,7 @@ namespace SocialMedialPlatformAPI.BLL
                 NotificationTypeId = NotificationTypeId.RequestId,
                 Id = requestId,
                 IsDeleted = request.IsDeleted,
+                modifiedDate=DateTime.Now,
                 
             });
             _context.Requests.Update(request);
@@ -375,8 +375,6 @@ namespace SocialMedialPlatformAPI.BLL
               });
 
             IFormFile file = ProfilePhoto;
-
-            // Delete the old profile photo file if it exists
             if (!string.IsNullOrEmpty(user.ProfilePictureUrl) && System.IO.File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", user.ProfilePictureUrl)))
             {
                 System.IO.File.Delete(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", user.ProfilePictureUrl));

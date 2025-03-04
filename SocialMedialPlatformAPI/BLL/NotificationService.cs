@@ -17,8 +17,6 @@ namespace SocialMedialPlatformAPI.BLL
             _dbcontext = db;
             _helper = helper;
         }
-
-
         public async Task<PaginationResponseModel<NotificationResponseDto>> GetNotificationListById(PaginationRequestDto model)
         {
             long userId = _helper.GetUserIdClaim();

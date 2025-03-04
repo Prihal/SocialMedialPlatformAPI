@@ -1,5 +1,4 @@
 ﻿namespace SocialMedialPlatformAPI.DTO;
-
 public class CommentPostDto
 {
     public long UserId {  get; set; }

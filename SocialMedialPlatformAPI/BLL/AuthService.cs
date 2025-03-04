@@ -8,14 +8,11 @@ using SocialMedialPlatformAPI.Models;
 using SocialMedialPlatformAPI.Utils;
 using SocialMedialPlatformAPI.Common;
 
-
-
 namespace SocialMedialPlatformAPI.BLL
 {
     public class AuthService:IAuthService
     {
         private readonly AppDbContext _context;
-       
         private readonly IConfiguration _configuration;
         private readonly IJwtService _jwtService;
         private readonly Helper _helper;
@@ -24,7 +21,6 @@ namespace SocialMedialPlatformAPI.BLL
         {
           
             _context = context;
-           
             _configuration = configuration;
             _jwtService = jwtService;
             _helper = helper;
@@ -70,9 +66,7 @@ namespace SocialMedialPlatformAPI.BLL
                         parameter = "UserName",
                         errorCode = CustomErrorCode.IsNotExist
                     }
-                });
-
-           
+                });   
         }
 
         public async Task<UserDto> InsertUserData(UserDto userDto)
@@ -127,15 +121,15 @@ namespace SocialMedialPlatformAPI.BLL
 
                 if (!string.IsNullOrWhiteSpace(user.UserName) && user.UserName.ToLower() == loginRequestDto.UserID.ToLower())
                 {
-                    user.LoginType = "UserName"; // Store the LoginType
+                    user.LoginType = "UserName"; 
                 }
                 else if (!string.IsNullOrWhiteSpace(user.Email) && user.Email.ToLower() == loginRequestDto.UserID.ToLower())
                 {
-                    user.LoginType = "Email"; // Store the LoginType
+                    user.LoginType = "Email"; 
                 }
                 else if (!string.IsNullOrWhiteSpace(user.ContactNumber) && user.ContactNumber == loginRequestDto.UserID)
                 {
-                    user.LoginType = "Phone"; // Store the LoginType
+                    user.LoginType = "Phone"; 
                 }
 
                 if (user == null)

@@ -246,9 +246,7 @@ namespace SocialMedialPlatformAPI.BLL
             return true;
         }
         public bool IsUniqueEmail(UserDto model)
-        {
-            //User? user = _dbcontext.Users.FirstOrDefault(m => ((m.Email ?? string.Empty).ToLower() == (model.Email ?? string.Empty).ToLower() && !string.IsNullOrWhiteSpace(m.Email))
-            //                           && m.IsDeleted != true && (m.UserId <= 0 || m.UserId != model.UserId));
+        {                                  
             User user = _context.Users.FirstOrDefault(m => m.Email.ToLower() == model.Email.ToLower() && m.IsDeleted == false && (m.UserId <= 0 || m.UserId != model.UserId));
             if (user == null) return false;
 
@@ -630,14 +628,11 @@ namespace SocialMedialPlatformAPI.BLL
             }
             return _errors;
         }
-
         public List<ValidationError> ValidateRequestList(RequestDto<FollowRequestDto> requestDto)
         {
             ValidateUserId(requestDto.Model.userId);
             return _errors;
         }
-
-
         public List<ValidationError> ValidateCreatePost(CreatePostDto createPostDto)
         {
             if (createPostDto.PostId > 0)
@@ -725,7 +720,6 @@ namespace SocialMedialPlatformAPI.BLL
             }
             return _errors;
         }
-
         public List<ValidationError> ValidateGetPostById(long postId, string postType)
         {
             ValidateGetPostId(postId);
@@ -775,7 +769,6 @@ namespace SocialMedialPlatformAPI.BLL
             }
             return _errors;
         }
-
         public List<ValidationError> ValidatePostList(RequestDto<PostListRequestDto> postListRequestDto)
         {
             ValidateUserId(postListRequestDto.Model.UserId);
@@ -791,7 +784,6 @@ namespace SocialMedialPlatformAPI.BLL
             }
             return _errors; ;
         }
-
         public List<ValidationError> ValidateLikePost(long userId, long PostId)
         {
             ValidateUserId(userId);
@@ -799,7 +791,6 @@ namespace SocialMedialPlatformAPI.BLL
             return _errors;
             
         }
-
         public List<ValidationError> ValidateCommentPost(CommentPostDto commentPostDto)
         {
             ValidateUserId(commentPostDto.UserId);
@@ -817,7 +808,6 @@ namespace SocialMedialPlatformAPI.BLL
             return _errors;
 
         }
-
         public List<ValidationError> ValidateCommentId(long commentId)
         {
             if (commentId == 0)
@@ -852,7 +842,6 @@ namespace SocialMedialPlatformAPI.BLL
             }
             return _errors;
         }
-
         public List<ValidationError> ValidateUserStoryData(long userId, StoryDto storyDto)
         {
             List<ValidationError> errors = new();
@@ -877,7 +866,6 @@ namespace SocialMedialPlatformAPI.BLL
 
         return errors;
         }
-
         public List<ValidationError> ValidateStoryId(long storyId)
         {
             if (storyId == 0)

@@ -27,8 +27,7 @@ namespace SocialMedialPlatformAPI.Controllers
             _jwtService = jwtService;
         }
 
-        [HttpGet("SignIn-Google")]
-        
+        [HttpGet("SignIn-Google")]     
         public IActionResult SignInGoogle()
         {
             var redirectUrl = Url.Action("GoogleResponse", null,Request.Scheme);
@@ -38,6 +37,7 @@ namespace SocialMedialPlatformAPI.Controllers
             };
             return Challenge(property,GoogleDefaults.AuthenticationScheme);
         }
+
         [HttpGet("google-response")]
         public async Task<IActionResult> GoogleResponse()
         {

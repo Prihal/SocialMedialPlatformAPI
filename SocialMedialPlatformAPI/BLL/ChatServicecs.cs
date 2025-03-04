@@ -13,10 +13,8 @@ namespace SocialMedialPlatformAPI.BLL
         {
             _context = context;
         }
-
         public async Task<PaginationResponseModel<ResponseMessageDto>> GetAllMessage(long UserId)
-        {
-            
+        { 
                 List<ResponseMessageDto> message = await _context.Chats
                     .Include(x=>x.Messages)                   
                     .Select(m => new ResponseMessageDto
@@ -32,7 +30,7 @@ namespace SocialMedialPlatformAPI.BLL
                 
                 int totalRecords = filteredMessage.Count;
                 if(totalRecords !=0)
-            {
+                {
                 var data = await _context.Messages.Where(x => x.ToUserId == UserId).ToListAsync();
                 foreach(var d in data)
                 {
@@ -41,7 +39,7 @@ namespace SocialMedialPlatformAPI.BLL
                     _context.Messages.Update(d);
                 }
                 await _context.SaveChangesAsync();
-            }
+                }
                 int requiredPages = (int)Math.Ceiling((decimal)totalRecords / totalRecords);
                 List<ResponseMessageDto> paginatedMessage = filteredMessage
                     .Skip((totalRecords - 1) * totalRecords)

@@ -47,6 +47,7 @@ namespace SocialMedialPlatformAPI.BLL
                     Id = comment.CommentId,
                     IsDeleted = comment.IsDeleted,
                     PostId = commentPostDto.PostId,
+                    modifiedDate= DateTime.Now,
                 });
             }
             return true;
@@ -88,11 +89,9 @@ namespace SocialMedialPlatformAPI.BLL
             }
             catch (Exception ex)
             {
-                // Log the error for further investigation
-                throw; // Re-throw the exception if you want to propagate it further
+                
+                throw; 
             }
-
-
             List<Media> medias = new();
             List<PostMapping> postMappings = new();
             if (createPostDto.PostId == 0)
@@ -166,12 +165,9 @@ namespace SocialMedialPlatformAPI.BLL
                 }
                 catch (Exception ex)
                 {
-                    // Log the error for further investigation
-                    throw; // Re-throw the exception if you want to propagate it further
+                    throw;
                 }
             }
-
-            // Prepare response DTO
             PostResponseDTO responseDTO = new()
             {
                 PostId = post.PostId,
@@ -232,43 +228,43 @@ namespace SocialMedialPlatformAPI.BLL
         {
 
             IQueryable<PostResponseDTO> posts = _context.Posts
-    .Include(m => m.Likes)
-    .Include(m => m.PostMappings).Include(m => m.Comments).Include(m => m.User)
-    .Where(m => m.IsDeleted == false && (requestDto.Model.PostType == "Post" ? m.PostTypeId == 4 : m.PostTypeId == 3) && m.UserId == requestDto.Model.UserId)
-    .OrderByDescending(p => p.CreatedDate)
-    .Select(post => new PostResponseDTO
-    {
-        PostId = post.PostId,
-        UserId = post.UserId,
-        UserName = post.User.UserName,
-        ProfilePhotoName = post.User.ProfilePictureName,
-        Caption = post.Caption,
-        Location = post.Location,
-        PostType = post.PostTypeId == 3 ? "Reel" : "Post",
-        Medias = post.PostMappings.Select(m => new Media
-        {
-            PostMappingId = m.PostMappingId,
-            MediaType = m.MediaTypeId == 1 ? "Images" : "Video",
-            MediaURL = m.MediaUrl,
-            MediaName = m.MediaName
-        }).ToList(),
-        PostLikes = post.Likes.Where(l => l.IsDeleted == false).Select(l => new PostLike
-        {
-            LikeId = l.LikeId,
-            UserId = l.UserId,
-            Avtar = l.User.ProfilePictureName,
-            UserName = l.User.UserName
-        }).ToList(),
-        PostComments = post.Comments.Where(l => l.IsDeleted == false).Select(c => new PostComment
-        {
-            CommentId = c.CommentId,
-            UserId = c.UserId,
-            CommentText = c.CommentText,
-            Avtar = c.User.ProfilePictureName,
-            UserName = c.User.UserName
-        }).ToList()
+                    .Include(m => m.Likes)
+                    .Include(m => m.PostMappings).Include(m => m.Comments).Include(m => m.User)
+                    .Where(m => m.IsDeleted == false && (requestDto.Model.PostType == "Post" ? m.PostTypeId == 4 : m.PostTypeId == 3) && m.UserId == requestDto.Model.UserId)
+                    .OrderByDescending(p => p.CreatedDate)
+                    .Select(post => new PostResponseDTO
+                 {
+                            PostId = post.PostId,
+                            UserId = post.UserId,
+                            UserName = post.User.UserName,
+                            ProfilePhotoName = post.User.ProfilePictureName,
+                            Caption = post.Caption,
+                            Location = post.Location,
+                            PostType = post.PostTypeId == 3 ? "Reel" : "Post",
+                            Medias = post.PostMappings.Select(m => new Media
+                            {
+                                PostMappingId = m.PostMappingId,
+                                MediaType = m.MediaTypeId == 1 ? "Images" : "Video",
+                                MediaURL = m.MediaUrl,
+                                MediaName = m.MediaName
+                            }).ToList(),
+                            PostLikes = post.Likes.Where(l => l.IsDeleted == false).Select(l => new PostLike
+                            {
+                                LikeId = l.LikeId,
+                                UserId = l.UserId,
+                                Avtar = l.User.ProfilePictureName,
+                                UserName = l.User.UserName
+                            }).ToList(),
+                            PostComments = post.Comments.Where(l => l.IsDeleted == false).Select(c => new PostComment
+                            {
+                                CommentId = c.CommentId,
+                                UserId = c.UserId,
+                                CommentText = c.CommentText,
+                                Avtar = c.User.ProfilePictureName,
+                                UserName = c.User.UserName
+                            }).ToList()
 
-    });
+                        });
 
 
             int totalRecords = await posts.CountAsync();
@@ -359,13 +355,13 @@ namespace SocialMedialPlatformAPI.BLL
                 .Select(u => u.UserId)
                 .ToListAsync();
             HashSet<long> combinedUserIds = requestUserIds.Union(userUserIds).ToHashSet();
-            // Retrieve all posts first
+            
             List<PostResponseDTO> postList = await _context.Posts
                 .Include(p => p.User)
                 .Include(p => p.PostMappings)
                 .Include(p => p.Likes)
                 .Include(p => p.Comments)
-                .Where(p => !p.IsDeleted) // Get all non-deleted posts first
+                .Where(p => !p.IsDeleted) 
                 .OrderByDescending(p => p.CreatedDate)
                 .Select(post => new PostResponseDTO
                 {

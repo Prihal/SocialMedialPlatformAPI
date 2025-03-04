@@ -29,6 +29,12 @@ namespace SocialMedialPlatformAPI.Controllers
         [HttpPost("CreatePost")]
         public async Task<ActionResult> CreatePost([FromForm]CreatePostDto createPostDto)
         {
+            //insert database for media type
+            //INSERT INTO dbo.MediaType(MediaTypeId, MediaType) VALUES(1, 'Image');
+            //INSERT INTO dbo.MediaType(MediaTypeId, MediaType) VALUES(2, 'Video');
+            //INSERT INTO dbo.MediaType(MediaTypeId, MediaType) VALUES(3, 'Reel');
+            //INSERT INTO dbo.MediaType(MediaTypeId, MediaType) VALUES(4, 'Post');
+
             try
             {
                 List<ValidationError> errors = _validationService.ValidateCreatePost(createPostDto);

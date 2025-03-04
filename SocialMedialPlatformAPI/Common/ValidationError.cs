@@ -1,5 +1,4 @@
 ﻿namespace SocialMedialPlatformAPI.Common;
-
 public class ValidationError
 {
     public string? message;

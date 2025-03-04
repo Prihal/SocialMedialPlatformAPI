@@ -4,6 +4,7 @@ using SocialMedialPlatformAPI.DTO;
 using SocialMedialPlatformAPI.Helpers;
 using SocialMedialPlatformAPI.Interface;
 using SocialMedialPlatformAPI.Models;
+using static SocialMedialPlatformAPI.Utils.Enum;
 
 namespace SocialMedialPlatformAPI.BLL
 {
@@ -61,7 +62,6 @@ namespace SocialMedialPlatformAPI.BLL
             story.StoryUrl = filePath;
             story.StoryName = fileName;  
             DateTime currentTime = DateTime.Now;
-           // Calculate the time difference
             TimeSpan duration = currentTime - story.CreatedDate;
             story.StoryDuration = 0;
             story.Caption=storyDto.Caption;
@@ -69,7 +69,7 @@ namespace SocialMedialPlatformAPI.BLL
             story.IsDeleted = false;
             story.CreatedDate = DateTime.Now;
             story.ModifiedDate = DateTime.Now;
-            await _context.Stories.AddAsync(story);
+            await _context.Stories.AddAsync(story); 
             var a = await _context.SaveChangesAsync();
             return a > 0 ? true : false;  
         }
@@ -77,7 +77,7 @@ namespace SocialMedialPlatformAPI.BLL
         public void ChangeStoryDuration()
         {
             long userId = _helper.GetUserIdClaim();
-            var data = _context.Stories.Where(x => x.UserId == userId).ToList();
+            var data = _context.Stories.ToList();
             
             foreach (var item in data)
             {
@@ -122,9 +122,7 @@ namespace SocialMedialPlatformAPI.BLL
             var followingUserIds = await _context.Requests
          .Where(f => f.FromUserId == userId && f.IsAccepted == true) 
          .Select(f => f.ToUserId) 
-         .ToListAsync();
-
-      
+         .ToListAsync(); 
      var stories = await _context.Stories
     .Where(s => s.IsDeleted == false)
     .GroupBy(s => s.UserId)
@@ -139,9 +137,7 @@ namespace SocialMedialPlatformAPI.BLL
             StoryDuration = (int)s.StoryDuration
         }).ToList()
     })
-    .ToListAsync();
-
-           
+    .ToListAsync();        
          List<GetAllStoryDto> allStories= stories.Where(x=>followingUserIds.Contains(x.UserId)).ToList();
 
             int totalRecords = allStories.Count;
@@ -218,8 +214,9 @@ namespace SocialMedialPlatformAPI.BLL
         {
             ChangeStoryDuration();
             var data = await _context.Stories.Where(x => x.StoryId == storyId && x.UserId == userId).FirstOrDefaultAsync();
-            if (data != null && data.IsDeleted==false) {
-                data.IsHighlighted= true;
+            if (data != null && data.IsDeleted == false)
+            {
+                data.IsHighlighted = true;
                 data.ModifiedDate = DateTime.Now;
                 _context.Stories.Update(data);
             }
