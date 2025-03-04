@@ -93,7 +93,7 @@ namespace SocialMedialPlatformAPI.Helpers
 
             Notification? obj = notificationDto.NotificationTypeId switch
             {
-                //NotificationTypeId.PostId => await  data.FirstOrDefaultAsync(m => m.PostId == model.Id),
+                NotificationTypeId.PostId => await  data.FirstOrDefaultAsync(m => m.PostId == notificationDto.Id),
                 NotificationTypeId.LikeId => await data.FirstOrDefaultAsync(m => m.LikeId == notificationDto.Id),
                 NotificationTypeId.CommentId => await data.FirstOrDefaultAsync(m => m.CommentId == notificationDto.Id),
                 NotificationTypeId.RequestId => await data.FirstOrDefaultAsync(m => m.RequestId == notificationDto.Id),
@@ -107,6 +107,7 @@ namespace SocialMedialPlatformAPI.Helpers
             notification.ToUserId = notificationDto.ToUserId;
             notification.NotificationType = (int)notificationDto.NotificationType;
             notification.CreatedDate = DateTime.Now;
+            notification.ModifiedDate = DateTime.Now;
             notification.IsDeleted = notificationDto.IsDeleted;
             notification.PostId = notificationDto.PostId ?? null;
             if (obj == null)

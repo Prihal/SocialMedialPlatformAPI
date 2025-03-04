@@ -101,6 +101,7 @@ namespace SocialMedialPlatformAPI.BLL
             data.ForEach(x =>
             {
                 x.IsDeleted = true;
+                x.ModifiedDate = DateTime.Now;
             });
 
             await _dbcontext.SaveChangesAsync();

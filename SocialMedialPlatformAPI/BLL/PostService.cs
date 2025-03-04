@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SocialMedialPlatformAPI.Common;
 using SocialMedialPlatformAPI.Data;
 using SocialMedialPlatformAPI.DTO;
@@ -428,6 +427,7 @@ namespace SocialMedialPlatformAPI.BLL
             obj.UserId = likePostDto.UserId;
             obj.PostId = likePostDto.PostId;
             obj.IsLike = likePostDto.IsLike;
+            obj.ModifiedDate = DateTime.Now;
 
             if (like != null)
             {
@@ -456,6 +456,7 @@ namespace SocialMedialPlatformAPI.BLL
                     Id = obj.LikeId,
                     IsDeleted = obj.IsDeleted,
                     PostId = likePostDto.PostId,
+                    modifiedDate = DateTime.Now
                 });
             }
             return true;

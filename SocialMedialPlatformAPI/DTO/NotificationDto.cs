@@ -13,4 +13,6 @@ public class NotificationDto
     public bool IsDeleted { get; set; }
     public long? PostId { get; set; }
 
+    public DateTime modifiedDate { get; set; }
+
 }

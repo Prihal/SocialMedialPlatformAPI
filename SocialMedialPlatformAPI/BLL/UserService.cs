@@ -353,6 +353,7 @@ namespace SocialMedialPlatformAPI.BLL
                 NotificationTypeId = NotificationTypeId.RequestId,
                 Id = requestId,
                 IsDeleted = request.IsDeleted,
+                
             });
             _context.Requests.Update(request);
             await _context.SaveChangesAsync();
