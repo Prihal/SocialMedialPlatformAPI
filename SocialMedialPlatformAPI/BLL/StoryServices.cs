@@ -11,8 +11,7 @@ namespace SocialMedialPlatformAPI.BLL
     public class StoryServices : IStoryServicecs
     {
         private readonly AppDbContext _context;
-        private readonly Helper _helper;
-        
+        private readonly Helper _helper;      
         public StoryServices(AppDbContext context,Helper helper)
         {
             _context = context;
