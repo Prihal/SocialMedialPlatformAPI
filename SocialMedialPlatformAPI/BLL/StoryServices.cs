@@ -72,7 +72,6 @@ namespace SocialMedialPlatformAPI.BLL
             var a = await _context.SaveChangesAsync();
             return a > 0 ? true : false;  
         }
-
         public void ChangeStoryDuration()
         {
             long userId = _helper.GetUserIdClaim();
