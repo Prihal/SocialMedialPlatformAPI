@@ -134,10 +134,13 @@ internal class Program
             {
                 Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n" +
                               "Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\n" +
-                              "Example: \"Bearer 12345abcdef\"",
+                              "Example: \"12345abcdef\"",
                 Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                BearerFormat = "JWT",
                 In = ParameterLocation.Header,
                 Scheme = "Bearer"
+                
             });
             options.AddSecurityRequirement(new OpenApiSecurityRequirement
             {

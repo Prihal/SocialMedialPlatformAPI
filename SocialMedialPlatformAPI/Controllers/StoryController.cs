@@ -196,5 +196,33 @@ namespace SocialMedialPlatformAPI.Controllers
                 return BadRequest(_responseHandler.BadRequest(CustomErrorCode.StoryError, ex.Message, ""));
             }
         }
+
+        [HttpGet("GetAllArchiveStory")]
+        public  async Task<ActionResult> GetAllArchiveStory()
+        {
+            try
+            {
+                long userId = _helper.GetUserIdClaim();
+                List<ValidationError> errors = _validationService.ValidateUserId(userId);
+                if (errors.Any())
+                {
+                    return BadRequest(_responseHandler.BadRequest(CustomErrorCode.IsValid, CustomErrorMessage.ValidationStory, ""));
+                }
+                PaginationResponseModel<GetAllArchiveStoryDto> getStoryDto = await _storyServicecs.GetAllArchiveStory(userId);
+                if (getStoryDto == null)
+                {
+                    return BadRequest(_responseHandler.BadRequest(CustomErrorCode.GetStoryError, CustomErrorMessage.GetStoryErrors, ""));
+                }
+                return Ok(_responseHandler.Success(CustomErrorMessage.GetStory, getStoryDto));
+            }
+            catch (SqlException exp)
+            {
+                throw new Exception("SqlException While Login" + exp.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(_responseHandler.BadRequest(CustomErrorCode.StoryError, ex.Message, ""));
+            }
+        }
     }
 }

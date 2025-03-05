@@ -1,5 +1,6 @@
 ﻿
 using SocialMedialPlatformAPI.DTO;
+using SocialMedialPlatformAPI.Models;
 
 namespace SocialMedialPlatformAPI.Interface
 {
@@ -11,6 +12,7 @@ namespace SocialMedialPlatformAPI.Interface
         Task<bool> RemoveHighlight(long userId,long storyId);
         Task<PaginationResponseModel<GetStoryDto>> GetStory(long userId);
         Task<PaginationResponseModel<GetAllStoryDto>> GetAllStory(long userId);
+        Task<PaginationResponseModel<GetAllArchiveStoryDto>> GetAllArchiveStory(long userId);
         public void ChangeStoryDuration();
     }
 }

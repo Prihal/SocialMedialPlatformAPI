@@ -88,10 +88,10 @@ namespace SocialMedialPlatformAPI.BLL
                
                     var currentTime = DateTime.Now;
                     var duration = currentTime - item.CreatedDate;
-                    item.StoryDuration = duration.Hours;
+                    item.StoryDuration = (int)duration.TotalHours;
                     item.ModifiedDate = currentTime;
                 }
-                if (item.StoryDuration == 24) { 
+                if (item.StoryDuration == 24 || item.StoryDuration>24) { 
                     item.IsDeleted = true;
                     item.ModifiedDate = DateTime.Now;
                 }
@@ -113,6 +113,51 @@ namespace SocialMedialPlatformAPI.BLL
             var a=await _context.SaveChangesAsync();
             
             return a>0?true:false;
+        }
+
+        public async Task<PaginationResponseModel<GetAllArchiveStoryDto>> GetAllArchiveStory(long userId)
+        {
+            ChangeStoryDuration();
+           var stories = await _context.Stories
+           .Where(s => s.UserId==userId && s.StoryDuration>24)
+           .GroupBy(s => s.UserId)
+           .Select(g => new GetAllArchiveStoryDto
+           {
+               UserId = g.Key,
+               Stories = g.Select(s => new GetArchiveStorys
+               {
+                   UserId = s.UserId,
+                   StoryUrl = s.StoryUrl,
+                   StoryName = s.StoryName,
+                   CreateDate=s.CreatedDate
+               }).OrderBy(x=>x.CreateDate).ToList()
+           })
+           .ToListAsync();
+            
+
+            int totalRecords = stories.Count;
+            int requiredPages;
+            if (totalRecords == 0)
+            {
+                requiredPages = 0;
+            }
+            else
+            {
+                requiredPages = (int)Math.Ceiling((decimal)totalRecords / totalRecords);
+                List<GetAllArchiveStoryDto> paginatedMessage = stories
+                    .Skip((totalRecords - 1) * totalRecords)
+                    .Take(totalRecords)
+                    .ToList();
+            }
+            return new PaginationResponseModel<GetAllArchiveStoryDto>
+            {
+                TotalRecord = totalRecords,
+                PageSize = totalRecords,
+                PageNumber = totalRecords,
+                RequiredPage = requiredPages,
+                Records = stories
+            };
+
         }
 
         public async Task<PaginationResponseModel<GetAllStoryDto>> GetAllStory(long userId)
@@ -141,11 +186,19 @@ namespace SocialMedialPlatformAPI.BLL
          List<GetAllStoryDto> allStories= stories.Where(x=>followingUserIds.Contains(x.UserId)).ToList();
 
             int totalRecords = allStories.Count;
-            int requiredPages = (int)Math.Ceiling((decimal)totalRecords / totalRecords);
-            List<GetAllStoryDto> paginatedMessage = allStories
-                .Skip((totalRecords - 1) * totalRecords)
-                .Take(totalRecords)
-                .ToList();
+            int requiredPages;
+            if (totalRecords == 0)
+            {
+                requiredPages = 0;
+            }
+            else
+            {
+                requiredPages = (int)Math.Ceiling((decimal)totalRecords / totalRecords);
+                List<GetAllStoryDto> paginatedMessage = allStories
+                    .Skip((totalRecords - 1) * totalRecords)
+                    .Take(totalRecords)
+                    .ToList();
+            }
             return new PaginationResponseModel<GetAllStoryDto>
             {
                 TotalRecord = totalRecords,
@@ -180,11 +233,16 @@ namespace SocialMedialPlatformAPI.BLL
         };
 
             int totalRecords = stories.Count;
-            int requiredPages = (int)Math.Ceiling((decimal)totalRecords / totalRecords);
-            List<GetStory> paginatedMessage =stories
-                .Skip((totalRecords - 1) * totalRecords)
-                .Take(totalRecords)
-                .ToList();
+            int requiredPages;
+            if (totalRecords == 0) { requiredPages = 1; }
+            else
+            {
+                requiredPages = (int)Math.Ceiling((decimal)totalRecords / totalRecords);
+                List<GetStory> paginatedMessage = stories
+                    .Skip((totalRecords - 1) * totalRecords)
+                    .Take(totalRecords)
+                    .ToList();
+            }
             return new PaginationResponseModel<GetStoryDto>
             {
                 TotalRecord = totalRecords,

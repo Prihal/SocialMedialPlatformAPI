@@ -80,6 +80,7 @@ public class CustomErrorCode
     public const string InvalidPostType = "INVALID_Post_TYPE";
     public const string IsGetList = "GET_LIST_ERROR";
     public const string IsPostDelete = "POST_DELETE_ERROR";
+    public const string IsPostSaved = "POST_SAVED_ERROR";
     public const string IsNotificationDelete = "NOTIFICATION_DELETE_ERROR";
     public const string IsStoryDelete = "STORY_DELETE_ERROR";
     public const string IsPostLike = "LIKE_ERROR";

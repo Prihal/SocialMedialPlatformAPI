@@ -1,4 +1,6 @@
-﻿using SocialMedialPlatformAPI.DTO;
+﻿using SocialMedialPlatformAPI.BLL;
+using SocialMedialPlatformAPI.DTO;
+using SocialMedialPlatformAPI.Models;
 
 namespace SocialMedialPlatformAPI.Interface
 {
@@ -13,6 +15,9 @@ namespace SocialMedialPlatformAPI.Interface
         Task<bool> LikeAndUnlikePost(LikePostDto likePostDto);
         Task<bool> CommentPost(CommentPostDto commentPostDto);
         Task<bool> DetelePostComment(long commentId);
+
+        Task<bool> SaveOrUnSavePost(long postId,bool IsSaved);
+        Task<PaginationResponseModel<PostResponseDTO>> GetAllSavedPost();
 
 
     }

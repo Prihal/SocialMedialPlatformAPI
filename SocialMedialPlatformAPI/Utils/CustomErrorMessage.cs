@@ -87,6 +87,8 @@ public class CustomErrorMessage
     public const string ValidationProfile = "Validation failed for Profile data.";
     public const string ValidationSearchUser = "Validation failed for Serach User Data.";
     public const string ValidationPost = "Validation failed for Post data.";
+    public const string PostSaveError = "Post UnSaved....";
+    public const string PostSaveOrUnSave = "Successfully.....";
     public const string ValidationChat = "Validation failed for Chat data.";
     public const string ValidationNotification = "Validation failed for Notification data.";
     public const string ValidationStory = "Validation failed for Story data.";

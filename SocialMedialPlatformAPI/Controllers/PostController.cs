@@ -278,5 +278,60 @@ namespace SocialMedialPlatformAPI.Controllers
                 }
             }
         }
+
+        [HttpPost("SaveOrUnSavePost")]
+        public async Task<ActionResult> SaveOrUnSavePost(long postId,bool IsSaved)
+        {
+            try
+            {
+                List<ValidationError> errors = _validationService.ValidateGetPostId(postId);
+                if (errors.Any())
+                {
+                    return BadRequest(_responseHandler.BadRequest(CustomErrorCode.IsValid, CustomErrorMessage.ValidationPost, errors));
+                }
+                bool isSaved = await _postService.SaveOrUnSavePost(postId,IsSaved);
+                if (!isSaved)
+                {
+                    return BadRequest(_responseHandler.BadRequest(CustomErrorCode.IsPostSaved, CustomErrorMessage.PostSaveError, ""));
+                }
+                return Ok(_responseHandler.Success(CustomErrorMessage.PostSaveOrUnSave, postId));
+            }
+            catch (Exception ex)
+            {
+                if (ex is ValidationException vx)
+                {
+                    return BadRequest(_responseHandler.BadRequest(vx.ErrorCode, vx.Message, vx.Errors));
+                }
+                else
+                {
+                    return BadRequest(_responseHandler.BadRequest(CustomErrorCode.IsPostSaved, ex.Message, ""));
+                }
+            }
+        }
+
+        [HttpGet("GetAllSavedPost")]
+        public async Task<ActionResult> GetAllSavedPost()
+        {
+            try
+            {
+                PaginationResponseModel<PostResponseDTO> allSavedPost = await _postService.GetAllSavedPost();
+                if (allSavedPost==null)
+                {
+                    return BadRequest(_responseHandler.BadRequest(CustomErrorCode.IsGetList, CustomErrorMessage.GetList, ""));
+                }
+                return Ok(_responseHandler.Success(CustomErrorMessage.GetListSuccess,allSavedPost));
+            }
+            catch (Exception ex)
+            {
+                if (ex is ValidationException vx)
+                {
+                    return BadRequest(_responseHandler.BadRequest(vx.ErrorCode, vx.Message, vx.Errors));
+                }
+                else
+                {
+                    return BadRequest(_responseHandler.BadRequest(CustomErrorCode.IsGetList, ex.Message, ""));
+                }
+            }
+        }
     }
 }

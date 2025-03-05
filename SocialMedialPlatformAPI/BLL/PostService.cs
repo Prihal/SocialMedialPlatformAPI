@@ -224,6 +224,8 @@ namespace SocialMedialPlatformAPI.BLL
 
         }
 
+        
+
         public async Task<PaginationResponseModel<PostResponseDTO>> GetPostAndReelListById(RequestDto<PostListRequestDto> requestDto)
         {
 
@@ -456,6 +458,113 @@ namespace SocialMedialPlatformAPI.BLL
                 });
             }
             return true;
+        }
+
+        public async Task<bool> SaveOrUnSavePost(long postId, bool IsSaved)
+        {
+            long UserId = _helper.GetUserIdClaim();
+            List<long> FollowingUserIds = await _context.Requests
+               .Where(m => m.FromUserId == UserId && !m.IsDeleted && m.IsAccepted)
+               .Select(m => m.ToUserId)
+               .ToListAsync();
+            List<long> PostIds=null;
+            foreach (var item in FollowingUserIds)
+            {
+                PostIds =await _context.Posts.Where(x => x.UserId == item && x.IsDeleted == false).Select(x=>x.PostId).ToListAsync();
+
+                foreach (var id in PostIds)
+                {
+                    var data = await _context.Posts.Where(x => x.PostId == id).FirstOrDefaultAsync();
+                    if (data != null && data.PostId == postId && data.IsDeleted == false)
+                    {
+                        data.IsSaved = IsSaved;
+                        data.ModifiedDate = DateTime.Now;
+                        _context.Posts.Update(data);
+                    }
+                }
+
+            }
+           
+            var a=await _context.SaveChangesAsync();
+            return a>0?true:false;
+        }
+
+        public async Task<PaginationResponseModel<PostResponseDTO>> GetAllSavedPost()
+        {
+            long UserId = _helper.GetUserIdClaim();
+            List<long> FollowingUserIds = await _context.Requests
+               .Where(m => m.FromUserId == UserId && !m.IsDeleted && m.IsAccepted)
+               .Select(m => m.ToUserId)
+               .ToListAsync();
+
+            List<PostResponseDTO> postList = await _context.Posts
+                .Include(p => p.User)
+                .Include(p => p.PostMappings)
+                .Include(p => p.Likes)
+                .Include(p => p.Comments)
+                .Where(p => !p.IsDeleted && p.IsSaved==true)
+                .OrderByDescending(p => p.CreatedDate)
+                .Select(post => new PostResponseDTO
+                {
+                    PostId = post.PostId,
+                    UserId = post.UserId,
+                    UserName = post.User.UserName,
+                    ProfilePhotoName = post.User.ProfilePictureName,
+                    Caption = post.Caption,
+                    Location = post.Location,
+                    PostType = post.PostTypeId == 3 ? "Reel" : "Post",
+                    Medias = post.PostMappings.Select(m => new Media
+                    {
+                        PostMappingId = m.PostMappingId,
+                        MediaType = m.MediaTypeId == 1 ? "Images" : "Video",
+                        MediaURL = m.MediaUrl,
+                        MediaName = m.MediaName
+                    }).ToList(),
+                    PostLikes = post.Likes.Where(l => !l.IsDeleted).Select(l => new PostLike
+                    {
+                        LikeId = l.LikeId,
+                        UserId = l.UserId,
+                        Avtar = l.User.ProfilePictureName,
+                        UserName = l.User.UserName
+                    }).ToList(),
+                    PostComments = post.Comments.Where(c => !c.IsDeleted).Select(c => new PostComment
+                    {
+                        CommentId = c.CommentId,
+                        UserId = c.UserId,
+                        CommentText = c.CommentText,
+                        Avtar = c.User.ProfilePictureName,
+                        UserName = c.User.UserName
+                    }).ToList()
+                })
+                .ToListAsync();
+            List<PostResponseDTO> filteredPosts = postList
+                .Where(p=>FollowingUserIds.Contains(p.UserId))
+                .ToList();
+            int totalRecords = filteredPosts.Count;
+            int requiredPages;
+            if (totalRecords == 0)
+            {
+                requiredPages = 0;
+            }
+            else
+            {
+                requiredPages = (int)Math.Ceiling((decimal)totalRecords / totalRecords);
+            }
+            List<PostResponseDTO> paginatedPosts = filteredPosts
+                .Skip((totalRecords - 1) * totalRecords)
+                .Take(totalRecords)
+                .ToList();
+            return new PaginationResponseModel<PostResponseDTO>
+            {
+                TotalRecord = totalRecords,
+                PageSize = totalRecords,
+                PageNumber = totalRecords,
+                RequiredPage = requiredPages,             
+                Records = paginatedPosts
+            
+               
+            };
+
         }
     }
 }
